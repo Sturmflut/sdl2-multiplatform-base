@@ -33,11 +33,15 @@ PREREQUISITE 2: The Android SDK
 export PATH=$PATH:~/Android/Sdk/ndk-bundle/
 export ANDROID_HOME=~/Android/Sdk/
 
+7. Run "./boostrap-android.sh" to build everything for the first time. The APK will end up in the bin/ subdirectory.
+
 
 HOW TO BUILD
 ============
 
-Run the "./build-android.sh" script. It tries to check for the most common errors and then tries to build the APK package inside the bin/ subdirectory.
+Run the "./build-android.sh" script after every modification to the source code. If something breaks, you can try to run "./boostrap-android.sh" which will clean everything and then rebuild.
+
+Run "ant install" to automatically install the generated APK on a connected device.
 
 
 HOW TO ADD YOUR PROJECT FILES
