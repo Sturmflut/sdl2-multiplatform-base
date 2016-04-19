@@ -1,0 +1,6 @@
+bin
+obj
+build
+jni/SDL
+nohup.out
+libs
