@@ -4,3 +4,4 @@ build
 jni/SDL
 nohup.out
 libs
+CMakeLists.txt.user
