@@ -18,10 +18,13 @@ SDL_Renderer* renderer;
 SDL_Texture *texture_panda;
 
 
+SDL_Rect rect_screen;
+SDL_Rect rect_panda;
+
+
 int init()
 {
     SDL_DisplayMode mode;
-    SDL_Rect screen_size;
 
     // Initialize SDL itself
     printf("SDL_Init()\n");
@@ -43,16 +46,16 @@ int init()
         return 0;
     }
 
-    screen_size.w = mode.w;
-    screen_size.h = mode.h;
+    rect_screen.w = mode.w;
+    rect_screen.h = mode.h;
 
     //Create a new full-screen window
     printf("SDL_CreateWindow()\n");
     window = SDL_CreateWindow("Multiplatform Base Application",
                               SDL_WINDOWPOS_UNDEFINED,
                               SDL_WINDOWPOS_UNDEFINED,
-                              screen_size.w,
-                              screen_size.h,
+                              rect_screen.w,
+                              rect_screen.h,
                               SDL_WINDOW_SHOWN);
     if(!window)
     {
@@ -91,6 +94,10 @@ int load_resources()
         printf("SDL_LoadBMP error: %s\n", SDL_GetError());
         return 0;
     }
+
+    // Store panda size
+    rect_panda.w = bitmap_panda->w;
+    rect_panda.h = bitmap_panda->h;
 
     // Convert the panda to a texture
     printf("SDL_CreateTextureFromSurface()\n");
@@ -141,6 +148,13 @@ int main(int argc, char** argv)
 {
     int running = 1;
 
+    int move_right = 1;
+    int move_down = 1;
+
+    int frame_current = 0;
+    Uint32 ticks;
+
+
     // Initialize everything
     if(!init())
     {
@@ -159,21 +173,70 @@ int main(int argc, char** argv)
         return 1;
     }
 
+    // Initialize Panda
+    rect_panda.x = 1;
+    rect_panda.y = 1;
+
+    // Measure time
+    ticks = SDL_GetTicks();
+
     // Main loop
     do
     {
+        frame_current++;
+
+        // Move the Panda
+        if(move_right)
+            rect_panda.x++;
+        else
+            rect_panda.x--;
+
+        if(move_down)
+            rect_panda.y++;
+        else
+            rect_panda.y--;
+
+        // Handle edges
+        if(move_right && rect_panda.x > rect_screen.w - rect_panda.w)
+            move_right = 0;
+
+        if(!move_right && rect_panda.x < 1)
+            move_right = 1;
+
+        if(move_down && rect_panda.y > rect_screen.h - rect_panda.h)
+            move_down = 0;
+
+        if(!move_down && rect_panda.y < 1)
+            move_down = 1;
+
+
         // Handle events
         running = handle_events();
+
+        // Set the background color
+        SDL_SetRenderDrawColor(renderer,
+                               frame_current % 255,
+                               frame_current % 255,
+                               frame_current % 255,
+                               SDL_ALPHA_OPAQUE);
 
         // Clear the renderer
         SDL_RenderClear(renderer);
 
         // Draw the panda
-        SDL_RenderCopy(renderer, texture_panda, NULL, NULL);
+        SDL_RenderCopy(renderer, texture_panda, NULL, &rect_panda);
 
         // Update the screen
         SDL_RenderPresent(renderer);
 
+        // Calculate FPS
+        if(frame_current % 60 == 0)
+        {
+            Uint32 tick_diff = SDL_GetTicks() - ticks;
+            printf("%.2f FPS (%i milliseconds) for the last 60 frames\n", 1.0 / (tick_diff / 60000.0), tick_diff);
+
+            ticks = SDL_GetTicks();
+        }
     } while(running);
 
     // Free resources
