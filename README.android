@@ -1,0 +1,48 @@
+PREREQUISITE 1: SDL2 sources
+============================
+
+1. Download the current SDL2 sources.
+
+2. Unpack to a permanent location.
+
+3. Create a symlink called "jni/SDL" inside this project which points to the unpacked SDL2 source code.
+
+
+PREREQUISITE 2: The Android SDK
+===============================
+
+1. Download and install Android Studio.
+
+2. Run the SDK Manager inside Android Studio ("Configure -> SDK Manager" on the Welcome screen).
+
+3. In the "SDK Platforms" tab, click on "Show Package Details". Navigate to "Android 4.0.3 (IceCreamSandwich)" and activate the following three entries:
+
+- "SDK Platform Android 4.0.3"
+- "Sources for Android SDK"
+- "ARM EABI v7a System Image"
+- "Intel x86 Atom System Image"
+
+4. In the "SDK Tools" tab, activate the following entries:
+
+- "Android NDK"
+
+5. Click on "Apply" and finish the wizard. If everything went well, you now have an ~/Android/Sdk/ folder containing all the necessary Android SDK stuff.
+
+6. Make sure "~/Android/Sdk/ndk-bundle/" is part of your PATH environment variable (otherwise the "ndk-build" command cannot be found), and set the environment variable ANDROID_HOME to "~/Android/Sdk/". You can do both by e.g. putting the following line at the bottom of your ~/.bashrc :
+
+export PATH=$PATH:~/Android/Sdk/ndk-bundle/
+export ANDROID_HOME=~/Android/Sdk/
+
+
+HOW TO BUILD
+============
+
+Run the "./build-android.sh" script. It tries to check for the most common errors and then tries to build the APK package inside the bin/ subdirectory.
+
+
+HOW TO ADD YOUR PROJECT FILES
+=============================
+
+All your source code files have to be added to the LOCAL_SRC_FILES variable in the ./jni/src/Android.mk makefile.
+
+All the assets go into the assets/ subdirectory. All the SDL_Load*() calls will work correctly and look into this directory on Android.
