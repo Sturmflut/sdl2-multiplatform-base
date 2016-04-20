@@ -28,6 +28,7 @@ Mix_Music* music_bg;
 Mix_Music* sound_jump;
 
 float accel = 0.0f;
+float rotation = 0.0f;
 
 
 int init()
@@ -249,12 +250,20 @@ int main(int argc, char** argv)
 
         // Move the Panda
         if(move_right)
+        {
             rect_panda.x = rect_panda.x + 3;
+            rotation += 1.5;
+        }
         else
+        {
             rect_panda.x = rect_panda.x - 3;
+            rotation -= 1.5;
+        }
+
 
         rect_panda.y -= accel;
         accel -= 1;
+
 
 
         // Handle edges and floor
@@ -286,7 +295,7 @@ int main(int argc, char** argv)
                          texture_panda,
                          NULL,
                          &rect_panda,
-                         0.0,
+                         rotation,
                          NULL,
                          move_right ? SDL_FLIP_NONE : SDL_FLIP_HORIZONTAL);
 
