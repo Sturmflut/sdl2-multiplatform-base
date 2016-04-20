@@ -1,4 +1,4 @@
-PREREQUISITE 1: SDL2 sources
+PREREQUISITE 1: SDL2
 ============================
 
 1. Download the current SDL2 sources.
@@ -9,7 +9,7 @@ PREREQUISITE 1: SDL2 sources
 
 
 
-PREREQUISITE 2: SDL2_mixer sources
+PREREQUISITE 2: SDL2_mixer
 ============================
 
 1. Download the current SDL2_mixer sources.
@@ -24,7 +24,20 @@ PREREQUISITE 2: SDL2_mixer sources
 
 
 
-PREREQUISITE 3: The Android SDK
+PREREQUISITE 3: SDL2_image
+============================
+
+1. Download the current SDL2_image sources.
+
+2. Unpack to a permanent location.
+
+3. Create a symlink called "jni/SDL2_image" inside this project which points to the unpacked SDL2_image source code.
+
+4. Create a symlink called "jni/libpng" inside this project which points to the "external/libpng-*" directory in the SDL2_mixer source code.
+
+
+
+PREREQUISITE 4: The Android SDK
 ===============================
 
 1. Download and install Android Studio.

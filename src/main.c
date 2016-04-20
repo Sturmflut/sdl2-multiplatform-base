@@ -8,9 +8,11 @@
 #ifdef BUILD_LINUX
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_mixer.h>
+#include <SDL2/SDL_image.h>
 #else
 #include <SDL.h>
 #include <SDL_mixer.h>
+#include <SDL_image.h>
 #endif
 
 
@@ -118,30 +120,18 @@ int init()
 
 int load_resources()
 {
-    // Load the panda
-    printf("SDL_LoadBMP(\"panda.bmp\")\n");
-    SDL_Surface* bitmap_panda = SDL_LoadBMP("panda.bmp");
-
-    if(!bitmap_panda)
-    {
-        printf("SDL_LoadBMP error: %s\n", SDL_GetError());
-        return 0;
-    }
-
-    // Store panda size
-    rect_panda.w = bitmap_panda->w;
-    rect_panda.h = bitmap_panda->h;
-
-    // Convert the panda to a texture
-    printf("SDL_CreateTextureFromSurface()\n");
-    texture_panda = SDL_CreateTextureFromSurface(renderer, bitmap_panda);
-    SDL_FreeSurface(bitmap_panda);
+    // Load the panda PNG into a texture
+    printf("IMG_LoadTexture()\n");
+    texture_panda = IMG_LoadTexture(renderer, "panda.png");
 
     if(!texture_panda)
     {
         printf("SDL_CreateTextureFromSurface error: %s\n", SDL_GetError());
         return 0;
     }
+
+    // Store panda size
+    SDL_QueryTexture(texture_panda, NULL, NULL, &rect_panda.w, &rect_panda.h);
 
     // Load background music
     printf("Mix_LoadMUS(\"bgmusic.ogg\")\n");
