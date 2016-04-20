@@ -2,6 +2,9 @@ bin
 obj
 build
 jni/SDL
+jni/SDL2_mixer
+jni/libmikmod
+jni/smpeg2
 nohup.out
 libs
 CMakeLists.txt.user
