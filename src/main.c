@@ -173,6 +173,7 @@ int load_resources()
 
 void free_resources()
 {
+    Mix_FreeMusic(sound_jump);
     Mix_FreeMusic(music_bg);
 
     SDL_DestroyTexture(texture_panda);
@@ -198,6 +199,7 @@ int handle_events()
             return 0;
         }
 
+        // Jump
         if(e.type == SDL_KEYDOWN
                 || e.type == SDL_FINGERDOWN
                 || e.type == SDL_MOUSEBUTTONDOWN)
