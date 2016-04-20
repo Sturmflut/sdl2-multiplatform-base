@@ -100,7 +100,7 @@ int init()
 
     // Open audio device
     printf("Mix_OpenAudio()\n");
-    if(Mix_OpenAudio(MIX_DEFAULT_FREQUENCY, MIX_DEFAULT_FORMAT, MIX_DEFAULT_CHANNELS, 4096) != 0)
+    if(Mix_OpenAudio(MIX_DEFAULT_FREQUENCY, MIX_DEFAULT_FORMAT, MIX_DEFAULT_CHANNELS, 1024) != 0)
     {
         printf("Mix_OpenAudio error: %s\n", Mix_GetError());
 
