@@ -8,7 +8,23 @@ PREREQUISITE 1: SDL2 sources
 3. Create a symlink called "jni/SDL" inside this project which points to the unpacked SDL2 source code.
 
 
-PREREQUISITE 2: The Android SDK
+
+PREREQUISITE 2: SDL2_mixer sources
+============================
+
+1. Download the current SDL2_mixer sources.
+
+2. Unpack to a permanent location.
+
+3. Create a symlink called "jni/SDL2_mixer" inside this project which points to the unpacked SDL2_mixer source code.
+
+4. Create a symlink called "jni/libmikmod" inside this project which points to the "external/libmikmod-*" directory in the SDL2_mixer source code.
+
+5. Create a symlink called "jni/smpeg2" inside this project which points to the "external/smpeg2-*" directory in the SDL2_mixer source code.
+
+
+
+PREREQUISITE 3: The Android SDK
 ===============================
 
 1. Download and install Android Studio.
@@ -36,12 +52,14 @@ export ANDROID_HOME=~/Android/Sdk/
 7. Run "./boostrap-android.sh" to build everything for the first time. The APK will end up in the bin/ subdirectory.
 
 
+
 HOW TO BUILD
 ============
 
 Run the "./build-android.sh" script after every modification to the source code. If something breaks, you can try to run "./boostrap-android.sh" which will clean everything and then rebuild.
 
 Run "ant install" to automatically install the generated APK on a connected device.
+
 
 
 HOW TO ADD YOUR PROJECT FILES

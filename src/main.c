@@ -7,8 +7,10 @@
 
 #ifdef BUILD_LINUX
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_mixer.h>
 #else
 #include <SDL.h>
+#include <SDL_mixer.h>
 #endif
 
 
@@ -17,9 +19,10 @@ SDL_Renderer* renderer;
 
 SDL_Texture *texture_panda;
 
-
 SDL_Rect rect_screen;
 SDL_Rect rect_panda;
+
+Mix_Music* music_bg;
 
 
 int init()
@@ -28,7 +31,7 @@ int init()
 
     // Initialize SDL itself
     printf("SDL_Init()\n");
-    if(SDL_Init(SDL_INIT_VIDEO) != 0)
+    if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) != 0)
     {
         printf("SDL_Init error: %s\n", SDL_GetError());
 
@@ -79,6 +82,33 @@ int init()
         return 0;
     }
 
+    // Init audio
+    printf("Mix_Init()\n");
+    if(Mix_Init(MIX_INIT_MP3) != MIX_INIT_MP3)
+    {
+        printf("Mix_Init error: %s\n", Mix_GetError());
+
+        SDL_DestroyRenderer(renderer);
+        SDL_DestroyWindow(window);
+        SDL_Quit();
+
+        return 0;
+    }
+
+    // Open audio device
+    printf("Mix_OpenAudio()\n");
+    if(Mix_OpenAudio(MIX_DEFAULT_FREQUENCY, MIX_DEFAULT_FORMAT, MIX_DEFAULT_CHANNELS, 2048) != 0)
+    {
+        printf("Mix_OpenAudio error: %s\n", Mix_GetError());
+
+        Mix_Quit();
+        SDL_DestroyRenderer(renderer);
+        SDL_DestroyWindow(window);
+        SDL_Quit();
+
+        return 0;
+    }
+
     return 1;
 }
 
@@ -110,12 +140,26 @@ int load_resources()
         return 0;
     }
 
+    // Load audio
+    printf("Mix_LoadMUS(\"bgmusic.ogg\")\n");
+    music_bg = Mix_LoadMUS("bgmusic.ogg");
+    if(!music_bg)
+    {
+        printf("Mix_LoadMUS error: %s\n", Mix_GetError());
+
+        SDL_DestroyTexture(texture_panda);
+        return 0;
+
+    }
+
     return 1;
 }
 
 
 void free_resources()
 {
+    Mix_FreeMusic(music_bg);
+
     SDL_DestroyTexture(texture_panda);
 }
 
@@ -179,6 +223,9 @@ int main(int argc, char** argv)
 
     // Measure time
     ticks = SDL_GetTicks();
+
+    // Start playing music
+    Mix_PlayMusic(music_bg, 1);
 
     // Main loop
     do

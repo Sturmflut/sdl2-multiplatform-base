@@ -7,6 +7,11 @@ if [ ! -e jni/SDL ]; then
 	exit 1
 fi
 
+if [ ! -e jni/SDL2_mixer ]; then
+	echo "ERROR: The symlink \"./jni/SDL2_mixer\" has to point to an SDL2_mixer source tree"
+	exit 1
+fi
+
 if [ -z "$ANDROID_HOME" ]; then
 	echo "ANDROID_HOME is not set"
 	exit 2
