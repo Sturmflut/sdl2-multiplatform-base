@@ -198,7 +198,9 @@ int handle_events()
             return 0;
         }
 
-        if(e.type == SDL_KEYDOWN || e.type == SDL_FINGERDOWN)
+        if(e.type == SDL_KEYDOWN
+                || e.type == SDL_FINGERDOWN
+                || e.type == SDL_MOUSEBUTTONDOWN)
         {
             accel = 20.0f;
             Mix_PlayChannel(-1, sound_jump, 0);
