@@ -5,6 +5,8 @@ jni/SDL
 jni/SDL2_mixer
 jni/libmikmod
 jni/smpeg2
+jni/SDL2_image
+jni/libpng
 nohup.out
 libs
 CMakeLists.txt.user
