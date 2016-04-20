@@ -23,6 +23,9 @@ SDL_Rect rect_screen;
 SDL_Rect rect_panda;
 
 Mix_Music* music_bg;
+Mix_Music* sound_jump;
+
+float accel = 0.0f;
 
 
 int init()
@@ -84,7 +87,7 @@ int init()
 
     // Init audio
     printf("Mix_Init()\n");
-    if(Mix_Init(MIX_INIT_MP3) != MIX_INIT_MP3)
+    if(Mix_Init(MIX_INIT_OGG) != MIX_INIT_OGG)
     {
         printf("Mix_Init error: %s\n", Mix_GetError());
 
@@ -97,7 +100,7 @@ int init()
 
     // Open audio device
     printf("Mix_OpenAudio()\n");
-    if(Mix_OpenAudio(MIX_DEFAULT_FREQUENCY, MIX_DEFAULT_FORMAT, MIX_DEFAULT_CHANNELS, 2048) != 0)
+    if(Mix_OpenAudio(MIX_DEFAULT_FREQUENCY, MIX_DEFAULT_FORMAT, MIX_DEFAULT_CHANNELS, 4096) != 0)
     {
         printf("Mix_OpenAudio error: %s\n", Mix_GetError());
 
@@ -140,16 +143,28 @@ int load_resources()
         return 0;
     }
 
-    // Load audio
+    // Load background music
     printf("Mix_LoadMUS(\"bgmusic.ogg\")\n");
-    music_bg = Mix_LoadMUS("bgmusic.ogg");
+    music_bg = Mix_LoadWAV("bgmusic.ogg");
     if(!music_bg)
     {
         printf("Mix_LoadMUS error: %s\n", Mix_GetError());
 
         SDL_DestroyTexture(texture_panda);
         return 0;
+    }
 
+    // Load background music
+    printf("Mix_LoadMUS(\"jump.ogg\")\n");
+    sound_jump = Mix_LoadWAV("jump.ogg");
+    if(!sound_jump)
+    {
+        printf("Mix_LoadMUS error: %s\n", Mix_GetError());
+
+        Mix_FreeMusic(music_bg);
+
+        SDL_DestroyTexture(texture_panda);
+        return 0;
     }
 
     return 1;
@@ -182,6 +197,12 @@ int handle_events()
         if (e.type == SDL_QUIT){
             return 0;
         }
+
+        if(e.type == SDL_KEYDOWN || e.type == SDL_FINGERDOWN)
+        {
+            accel = 20.0f;
+            Mix_PlayChannel(-1, sound_jump, 0);
+        }
     }
 
     return 1;
@@ -193,7 +214,6 @@ int main(int argc, char** argv)
     int running = 1;
 
     int move_right = 1;
-    int move_down = 1;
 
     int frame_current = 0;
     Uint32 ticks;
@@ -219,13 +239,14 @@ int main(int argc, char** argv)
 
     // Initialize Panda
     rect_panda.x = 1;
-    rect_panda.y = 1;
+    rect_panda.y = rect_screen.h - rect_panda.h;
 
     // Measure time
     ticks = SDL_GetTicks();
 
     // Start playing music
-    Mix_PlayMusic(music_bg, 1);
+    if(Mix_PlayChannel(0, music_bg, -1) == -1)
+        printf("Failed to play background music: %s\n", Mix_GetError());
 
     // Main loop
     do
@@ -234,27 +255,23 @@ int main(int argc, char** argv)
 
         // Move the Panda
         if(move_right)
-            rect_panda.x++;
+            rect_panda.x = rect_panda.x + 3;
         else
-            rect_panda.x--;
+            rect_panda.x = rect_panda.x - 3;
 
-        if(move_down)
-            rect_panda.y++;
-        else
-            rect_panda.y--;
+        rect_panda.y -= accel;
+        accel -= 1;
 
-        // Handle edges
+
+        // Handle edges and floor
         if(move_right && rect_panda.x > rect_screen.w - rect_panda.w)
             move_right = 0;
 
         if(!move_right && rect_panda.x < 1)
             move_right = 1;
 
-        if(move_down && rect_panda.y > rect_screen.h - rect_panda.h)
-            move_down = 0;
-
-        if(!move_down && rect_panda.y < 1)
-            move_down = 1;
+        if(rect_panda.y > rect_screen.h - rect_panda.h)
+            rect_panda.y = rect_screen.h - rect_panda.h;
 
 
         // Handle events
@@ -271,7 +288,13 @@ int main(int argc, char** argv)
         SDL_RenderClear(renderer);
 
         // Draw the panda
-        SDL_RenderCopy(renderer, texture_panda, NULL, &rect_panda);
+        SDL_RenderCopyEx(renderer,
+                         texture_panda,
+                         NULL,
+                         &rect_panda,
+                         0.0,
+                         NULL,
+                         move_right ? SDL_FLIP_NONE : SDL_FLIP_HORIZONTAL);
 
         // Update the screen
         SDL_RenderPresent(renderer);
